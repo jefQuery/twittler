@@ -12,27 +12,32 @@ Allow the user to tweet. (This is going to require you to understand a little mo
   <head>
     <script src="jquery.js"></script>
     <script src="data_generator.js"></script>
+    <title>Twittler.com</title>
   </head>
   <body>
-    <h1>Welcome to Twittler!</h1>
+    
     <script>
 
       $(document).ready(function(){
         var $body = $('body');
         $body.html('');
-        var btn = document.createElement("button");
-        var btnText = document.createTextNode("Show new tweets!");
-        btn.appendChild(btnText);
-        document.body.appendChild(btn);
+        $body.prepend('<div class="header"></div>')
+        $('.header').prepend('<h1></h1>');
+        $('h1').prepend('<a class="titleLink" href="index.html"></a>')
+        $('.titleLink').text('Welcome to Twittler!');
+        $body.append('<button>Show new tweets!</button>');
         var index = streams.home.length - 1;
         
         var addTweets = function(fromPress){
-          $(".tweet").remove();
+          fromPress ? $('.titleLink').text("~Twittler~") : null;
+
+          $(".tweet").remove(); //processor wasteful, but can't get other methods to work
           index = streams.home.length - 1;
           while(index >= 0){
             var tweet = streams.home[index];
             var $tweet = $('<div class="tweet"></div>');
             $tweet.text('@' + tweet.user + ': ' + tweet.message + ' ' + tweet.created_at);
+            
             $tweet.appendTo($body);
             index -= 1;
           }
