@@ -20,33 +20,43 @@ Allow the user to tweet. (This is going to require you to understand a little mo
 
       $(document).ready(function(){
         var $body = $('body');
+        var index = streams.home.length - 1;
+
         $body.html('');
+        $body.append('<button>Show new tweets!</button>');
+        $body.append('<section class="tweets"></section>');
         $body.prepend('<div class="header"></div>')
         $('.header').prepend('<h1></h1>');
         $('h1').prepend('<a class="titleLink" href="index.html"></a>')
         $('.titleLink').text('Welcome to Twittler!');
-        $body.append('<button>Show new tweets!</button>');
-        var index = streams.home.length - 1;
+
         
-        var addTweets = function(fromPress){
-          fromPress ? $('.titleLink').text("~Twittler~") : null;
+        
+        var addTweets = function(userName){
+          index = userName ? streams.users[userName].length - 1 : streams.home.length - 1;
 
           $(".tweet").remove(); //processor wasteful, but can't get other methods to work
-          index = streams.home.length - 1;
+
           while(index >= 0){
-            var tweet = streams.home[index];
-            var $tweet = $('<div class="tweet"></div>');
-            $tweet.text('@' + tweet.user + ': ' + tweet.message + ' ' + tweet.created_at);
-            
-            $tweet.appendTo($body);
+            var tweet = userName ? streams.users[userName][index] : streams.home[index];
+            var $tweet = $('<div class="tweet"><span class ="user"></span><span class="message"></span></div>');
+            var tweetTime = tweet.created_at.toString().split(' GMT')[0];
+            $tweet.children('.message').text(": "+ tweet.message + ' ' + tweetTime);
+            $tweet.children('.user').text("@" + tweet.user);
+            $tweet.appendTo('.tweets');
             index -= 1;
           }
         }
-        addTweets();
 
         $('body').on('click', 'button', function(){
-          addTweets(true);
+          addTweets();
         });
+        $('body').on('click', '.user', function(){
+          var userName = $(this).text().slice(1);
+          addTweets(userName);
+        });
+
+        addTweets();
 
       });
 
