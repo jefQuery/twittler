@@ -10,6 +10,7 @@ Show when the tweets were created in a human-friendly way (eg "10 minutes ago").
 Allow the user to tweet. (This is going to require you to understand a little more about data_generator.js, but you shouldn't need to modify anything.) -->
 <html>
   <head>
+    <link rel="stylesheet" type="text/css" href="style.css">
     <script src="jquery.js"></script>
     <script src="data_generator.js"></script>
     <title>Twittler.com</title>
@@ -25,24 +26,24 @@ Allow the user to tweet. (This is going to require you to understand a little mo
         $body.html('');
         $body.append('<button>Show new tweets!</button>');
         $body.append('<section class="tweets"></section>');
-        $body.prepend('<div class="header"></div>')
+        $body.prepend('<div class="header group"></div>')
+        $('.header').prepend('<img src="http://www.htmlarena.com/wp-content/themes/arena/img/inner-banner-new.jpg">')
         $('.header').prepend('<h1></h1>');
         $('h1').prepend('<a class="titleLink" href="index.html"></a>')
         $('.titleLink').text('Welcome to Twittler!');
-
-        
         
         var addTweets = function(userName){
           index = userName ? streams.users[userName].length - 1 : streams.home.length - 1;
-
-          $(".tweet").remove(); //processor wasteful, but can't get other methods to work
+          $(".tweet").remove();
 
           while(index >= 0){
             var tweet = userName ? streams.users[userName][index] : streams.home[index];
-            var $tweet = $('<div class="tweet"><span class ="user"></span><span class="message"></span></div>');
-            var tweetTime = tweet.created_at.toString().split(' GMT')[0];
-            $tweet.children('.message').text(": "+ tweet.message + ' ' + tweetTime);
-            $tweet.children('.user').text("@" + tweet.user);
+            var $tweet = $('<div class="tweet group"><span class ="user"></span><span class="time"></span><p class="message"></p></div>');
+            
+            $tweet.children('.user').text("@" + tweet.user + ":");
+            $tweet.children('.message').text(tweet.message);
+            $tweet.children('.time').text(tweet.created_at.toString().split(' GMT')[0]);
+            
             $tweet.appendTo('.tweets');
             index -= 1;
           }
@@ -51,8 +52,9 @@ Allow the user to tweet. (This is going to require you to understand a little mo
         $('body').on('click', 'button', function(){
           addTweets();
         });
-        $('body').on('click', '.user', function(){
-          var userName = $(this).text().slice(1);
+        $('.tweets').on('click', '.user', function(){
+          var userStr = $(this).text();
+          var userName = userStr.slice(1, userStr.length-1);
           addTweets(userName);
         });
 
